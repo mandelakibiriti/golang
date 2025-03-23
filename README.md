@@ -56,3 +56,46 @@ this design sparingly***. It’s also common to use pointers in functions to cre
 
 ## Concept 7 - Const and Enums
 - The const keyword is used to create a constant value. Constants are like variables, but you can’t change their initial values. These are useful for situations where the value of a constant doesn’t need to or shouldn’t change when your code is running.
+
+## Concept 8 - Scopes
+All the variables in Go live in a scope. The top-level scope is the package scope. A scope can have child scopes within it. The parent-child relationship is defined when the code compiles, not when the code runs. When accessing a variable, Go looks at the scope the code was defined in. If it can’t find a variable with that name, it looks in the parent scope, then the grandparent scope, all the way until it gets to the package scope. It stops looking once it finds a variable with a matching name or raises an error if it can’t find a match.
+
+- To put it another way, when your code uses a variable, Go needs to work out where that variable was defined. It starts its search in the scope of the code using the variable it’s currently running in. If a variable definition using that name is in that scope, then it stops looking and uses the variable definition to complete its work. If it can’t find a variable definition, then it starts walking up the stack of scopes, stopping as soon as it finds a variable with that name. This searching is all done based on a variable name. If a variable with that name is found but is of the wrong type, Go raises an error.
+
+## Concept 9 - Control
+It’s common to need to call a function but not care too much about the returned value. Often, you’ll want to check that it executed correctly and then discard the returned value; for example, sending an email, writing to a file, or inserting data into a database: most of the time, if these types of operations execute successfully, you don’t need to worry about the variables they return. 
+- Unfortunately, the variables don’t go anywhere as they are still in scope. To stop these unwanted variables from hanging around, we can use what we know about scope rules to get rid of them. The best way to check for errors is to use initial statements on if statements. The notation looks like this: 
+```golang
+    // If 
+    if <initial statement>; <boolean expression> { 
+        <code block> 
+    } else if <condition> {
+        <code block>
+    }
+
+    // Switch
+    switch <initial statement>; <expression> {
+        case <expression>:
+            <statements>
+        case <expression>, <expression>:
+            <statements>
+        default:
+            <statements>
+    }
+
+    // Endless loop with break and continue
+    for {
+        if <condition> {
+            <statment>
+            continue;
+        } else if <condition> {
+            <statement>
+            break;
+        }
+    }
+    
+    // For loop with condition
+    for <initial statement>; <condition>; <post statement> {
+        <statements>    
+    }  
+```

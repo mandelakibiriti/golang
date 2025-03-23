@@ -192,4 +192,19 @@ STOP:
 	}
 	defer file.Close()	
 	fmt.Println("File closed successfully") // This line will not be executed
+
+	/*
+		The panic statement is used to stop the normal execution of the program
+		The panic statement is followed by an error message
+		The panic statement can be used to handle unexpected errors
+		The recover statement is used to catch a panic and resume normal execution
+		The recover statement is used in a deferred function
+	*/	
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	panic("Panic!") // This line will cause the program to panic
+	fmt.Println("This line will not be executed")
 }

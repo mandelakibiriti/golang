@@ -97,5 +97,91 @@ It’s common to need to call a function but not care too much about the returne
     // For loop with condition
     for <initial statement>; <condition>; <post statement> {
         <statements>    
-    }  
+    }
+
+    // Defer function - code recovery
+    defer func () {
+        <code block to run recovery logic>
+    }()
+
+    <code block with error>
+
+    // Defer to handle operations post error
+    <code block to open file>
+
+    defer function to close file
+```
+
+## Concept 10 - Basic Data types
+Types are needed to make data easier for humans to work with. Computers only think about data in
+binary. Binary is hard for people to work with. By adding a layer of abstraction to binary data and
+labelling it as a number or some text, humans have an easier time reasoning about it. Reducing the
+cognitive load allows people to build more complex software because they’re not overwhelmed by
+managing the details of the binary data.
+
+The way data is stored is also a large part of what defines a type. To allow for the building of efficient
+software, Go places limits on how large some of its types can be. For example, the largest amount
+of storage for a number in Go’s core types is 64 bits of memory. 
+
+### Number Types
+- uint and int are either 32 or 64 bits, depending on whether you compile your code for a 32-bit
+system or a 64-bit system. It’s rare nowadays to run applications on a 32-bit system, as most systems
+nowadays are 64-bit. ***Only think about using the other types when using an int type is causing a problem.***
+
+| Type      | Size (bits)| Size (bytes) | Value Range (int Signed)       | Value Range (uint Unsigned)    |
+|-----------|------------|--------------|--------------------------------|--------------------------------|
+| `int8`    | 8          | 1            | -128 to 127                   | 0 to 255                      |
+| `int16`   | 16         | 2            | -32,768 to 32,767             | 0 to 65,535                   |
+| `int32`   | 32         | 4            | -2,147,483,648 to 2,147,483,647 | 0 to 4,294,967,295          |
+| `int64`   | 64         | 8            | -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 | 0 to 18,446,744,073,709,551,615 |
+| `int`     | 32 or 64   | 4 or 8       | Depends on system architecture| N/A                       |
+| `uint`    | 32 or 64   | 4 or 8       | N/A                           | Depends on system architecture |
+| `uintptr` | 32 or 64   | 4 or 8       | N/A                           | Used for storing pointer addresses |
+- Go has two floating-point number types, float32 and float64. The bigger float64 allows for
+more precision in numbers. ***float64’s bigger space for storage, it can store more whole numbers and/or more
+decimal numbers than float32 can.***
+- The byte type in Go is just an alias for uint8, which is a number that has eight bits of storage. Grouping bits into groups of eight was a common standard in early computing and became a near-universal way to encode data. 8-bits have 256 possible combinations of “off ” and “on,” so uint8 has 256 possible integer values from 0 to 255
+- When you try to initialize a number with a value that’s too big for the type you are using, you get an
+overflow error. The highest number you can have in an int8 type is 127. Wraparound means the number
+goes from its highest possible value to its lowest possible value. In the example below the `b` will move from 255 to 0 once it gets to the highest uint8 value.
+```go
+    var a int8 = 125
+	var b uint8 = 253
+	for i := 0; i < 5; i++ {
+		a++
+		b++
+		fmt.Println(i, ")", "int8", a, "uint8", b)
+	}
+```
+### Text Types
+- When you write text to a string variable it’s called a string literal. There are two kinds of string
+literals in Go:
+    - Raw – defined by wrapping text in a pair of `
+    - Interpreted – defined by surrounding the text in a pair of "
+- Raw literals, what ends up in your variable is precisely the text that you see on the screen. With
+interpreted literals, Go scans what you’ve written and then applies transformations based on its own
+set of rules.
+- **`Rune`** is a type with enough storage to store a single UTF-8 multi-byte character. String literals are
+encoded using UTF-8. UTF-8 is a massively popular and common multi-byte text encoding standard.
+The string type itself is not limited to UTF-8, as Go also needs to support other text encoding
+types.
+```go
+	username := "Sir_King_Über"
+	runes := []rune(username)
+
+	for i := 0; i < len(runes); i++ {
+		fmt.Print(string(runes[i]), " ")
+	}
+```
+
+## Concept 11 - Complex Data Types
+### Array
+When you define an array, you must specify what type of data it may contain and how big the array is in the following form: [<size>]<type>. For example,[10]int is an array of size 10 that contains integers, while [5]string is an array of size 5 that contains strings. 
+> The key to making this an array is specifying the size. If your definition didn’t have the size, it would seem like it works, but it would not be an array – it’d be a slice.
+```go
+[<size>]<type>{<value1>,<value2>,…<valueN>}.
+```
+Keys refer to the indices or positions used to initialize specific values in an array. By setting values at specific indices using keys, you can initialize an array with desired values at specific positions while leaving other elements at their default values.
+```go
+[<size>]<type>{<key1>:<value1>,…<keyN>:<valueN>}.
 ```

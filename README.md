@@ -156,7 +156,7 @@ goes from its highest possible value to its lowest possible value. In the exampl
 ### Text Types
 - When you write text to a string variable it’s called a string literal. There are two kinds of string
 literals in Go:
-    - Raw – defined by wrapping text in a pair of `
+    - Raw – defined by wrapping text in a pair of ``
     - Interpreted – defined by surrounding the text in a pair of "
 - Raw literals, what ends up in your variable is precisely the text that you see on the screen. With
 interpreted literals, Go scans what you’ve written and then applies transformations based on its own
@@ -175,7 +175,29 @@ types.
 ```
 
 ## Concept 11 - Complex Data Types
-### Array
+### Composite Data Types
+
+Composite data types in Go are used to group multiple values into a single data structure. These data types are essential for organizing, managing, and processing complex data efficiently.
+
+    - Arrays: Fixed-size collections of values with the same data type. Rarely used due to the preference for slices.
+    - Slices: Dynamic arrays that can grow or shrink. More flexible than arrays and used extensively.
+    - Maps: Key-value data structures for efficient lookups and data retrieval.
+    - Structs: User-defined composite types used to group together values of different data types.
+    - Channels: Used for communication and synchronization in concurrent programming.
+
+When to use Composite Data Types?
+
+- Arrays: Use arrays when you know the size of the collection is fixed and won't change during program execution. Arrays are useful for representing collections with a fixed number of elements like days of the week, months of the year, etc.
+
+- Slices: Slices are more flexible than arrays and should be used when you need a collection that can grow or shrink. Slices are suitable for dynamic data structures like lists, queues, and dynamic arrays.
+
+- Maps: Maps are used when you want to associate keys with values for efficient lookup and retrieval. They are ideal for implementing dictionaries, caches, and data indexing structures.
+
+- Structs: Structs are essential for creating user-defined data structures to group related data together. Use structs when you need to represent a complex entity with multiple attributes or fields.
+
+- Channels: Channels are crucial for concurrent programming and should be used when you need to establish communication and synchronization between different parts of your program running concurrently.
+
+### 1. Array
 When you define an array, you must specify what type of data it may contain and how big the array is in the following form: [<size>]<type>. For example,[10]int is an array of size 10 that contains integers, while [5]string is an array of size 5 that contains strings. 
 > The key to making this an array is specifying the size. If your definition didn’t have the size, it would seem like it works, but it would not be an array – it’d be a slice.
 ```go
@@ -185,3 +207,29 @@ Keys refer to the indices or positions used to initialize specific values in an 
 ```go
 [<size>]<type>{<key1>:<value1>,…<keyN>:<valueN>}.
 ```
+
+### 2. Slices
+
+> A slice is not a value, and it’s not a pointer, so what is it? A slice is a special construct in Go. 
+> A slice doesn’t store its own values directly. In the background, it’s using an array that you can’t access directly. 
+> What a slice does store is a pointer to that hidden array, its own starting point in that array, how long the slice is, and what the capacity of the slice is. These values provide slices with a window for the hidden array. The window can be the whole hidden array or just a smaller portion of it. The pointer to the hidden array can be shared by more than one slice. This pointer sharing can result in multiple slices that can share the same hidden array, even though not all the slides contain the same data. 
+> This means that one of the slices can have more data than the other slices.
+
+> When a slice needs to grow beyond its hidden array, it creates a new bigger array, copies the contents from the old array to the new one, and points the slice at the new array. This array swap is why our preceding slices became disconnected. At first, they were pointing to the same hidden array, but when we grow the first slice, the array it’s pointing to changes. This change means that changes to the grown slice no longer affect the other slices since they are still pointing to the old, smaller, array.
+
+> You can use ``append`` to copy the contents of the source slice into another array or use the built-in ``copy`` function. When using copy, Go won’t change the size of the destination slice, so be sure it has enough room for all the elements you want to copy.
+
+
+By using a similar notation to accessing a single element in an array or a slice, you can create new slices derived from the contents of arrays and slices. The most common notation is
+```go 
+ <slice>[<low>:<high>:<capacity>]
+```
+This notation tells Go to create a new slice with the same value type as the source slice or array and to populate the new slice with values by starting at the low index and then going up to, but not including, the high index. 
+
+Low and high are optional. If you omitted low, then Go defaults to the first element in the source. If you omit high, then it goes all the way to the last value. It’s possible to skip both, and if you do, then the new slice has all the values from the source.
+
+When you create new slices this way, Go doesn’t copy the values. If the source is an array, then that source array is the hidden array for the new slice. This is an important concept because modifying ANY slice also changes the underlying array, not a copy of it. Think of a slice as a “view” of the underlying array.
+
+Slices have three hidden properties: 
+> length, a pointer to the hidden array, and wherein the hidden array its starting point is. 
+> When you append to a slice, one or all of these properties get updated. Which properties get updated depends on whether the hidden array is full or not.
